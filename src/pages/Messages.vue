@@ -17,7 +17,7 @@
                         <span class="text-gray-500 hidden lg:inline-block">1월 29일</span>
                     </div>
                     <div class="text-gray-500">메세지</div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="flex space-x-1">
                     <div class="mr-4">
-                        <span class="font-bold">28</span><span class="text-gray-500">팔로워 중</span>
+                        <span class="font-bold">28</span><span class="text-gray-500">팔로워 중</span>
                     </div>
                     <div>
                         <span class="font-bold">7</span><span class="text-gray-500">팔로워</span>
