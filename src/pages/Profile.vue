@@ -1,6 +1,6 @@
 <template>
     <!-- profile section -->
-    <div class="flex-1 border-r border-gray-100">
+    <div class="flex flex-col flex-1 border-r border-gray-100">
         <!-- title -->
         <div class="flex p-2 border-b border-gray-100">
             <i class="fas fa-arrow-left text-lg w-10 h-10 text-primary rounded-full hover:bg-gray-50 text-center py-2 mr-6"></i>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <!-- background image -->
-        <div class="bg-gray-300 h-40 relative">
+        <div class="bg-gray-300 h-40 relative flex-none">
             <!-- profile image -->
             <div class=" w-28 h-28 rounded-full bg-gray-400 border-2 border-white absolute -bottom-14 left-2">
                 <img 
@@ -43,6 +43,10 @@
             <div class="hover:bg-gray-50 hover:text-primary w-1/4 cursor-pointer py-2">미디어</div>
             <div class="hover:bg-gray-50 hover:text-primary w-1/4 cursor-pointer py-2">마음에 들어요</div>
         </div>
+        <!-- tweets section -->
+        <div class="overflow-y-auto">
+        <Tweets v-for="tweets in 10" :key="tweets"/>
+        </div>
     </div>
     <!-- Trends section -->
     <Trends/>
@@ -50,9 +54,12 @@
 
 <script>
 import Trends from '../components/Trends.vue'
+import Tweets from '../components/Tweets.vue'
 export default {
     components: {
-        Trends
+        Trends,
+        Tweets
+
     }
 }
 </script>
