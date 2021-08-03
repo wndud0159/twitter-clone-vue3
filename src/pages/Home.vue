@@ -8,16 +8,17 @@
               </div>
               <!-- tweeting section -->
               <div class=" flex px-3 py-3 border-b-8 border-gray-100">
-                <img class=" cursor-pointer hover:opacity-80 w-10 h-10 rounded-full" src="http://picsum.photos/200" alt="">
+                <img class=" cursor-pointer hover:opacity-80 w-10 h-10 rounded-full" :src="currentUser.profile_image_url" alt="">
                 <div class=" ml-2 flex-1 flex flex-col">
-                  <textarea placeholder="무슨 일이 일어나고 있나요?" class=" w-full text-lg font-bold focus:outline-none mb-3 resize-none"></textarea>
+                  <textarea v-model="tweetBody" placeholder="무슨 일이 일어나고 있나요?" class=" w-full text-lg font-bold focus:outline-none mb-3 resize-none"></textarea>
                   <div class=" text-right">
-                    <button class=" hover:bg-dark text-sm font-bold bg-primary text-white px-4 py-1 rounded-full">트윗</button>
+                    <button v-if="!tweetBody.length" class=" hover:bg-primary text-sm font-bold bg-light text-white px-4 py-1 rounded-full">트윗</button>
+                    <button v-else @click="onAddTweet" class=" hover:bg-dark text-sm font-bold bg-primary text-white px-4 py-1 rounded-full">트윗</button>
                   </div>
                 </div>
               </div>
               <!-- tweets -->
-              <Tweets v-for="tweets in 10" :key="tweets" />
+              <Tweets :tweet="tweet"  v-for="tweet in tweets" :key="tweet.id" :currentUser="currentUser" />
             </div>
           </div>
           <!-- trend part -->
@@ -27,10 +28,80 @@
 <script>
 import Trends from '../components/Trends.vue'
 import Tweets from '../components/Tweets.vue'
+import {ref, computed, onBeforeMount} from 'vue'
+import store from '../store'
+import {TWEET_COLLECTION, USER_COLLECTION} from '../firebase'
+import addTweet from '../utills/addTweet'
+import getTweetInfo from '../utills/getTweetInfo'
+
 export default {
     components: {
         Trends,
         Tweets
+    },
+    setup() {
+      const tweetBody = ref('')
+      const currentUser = computed (() => store.state.user)
+      const tweets = ref([])
+
+
+      onBeforeMount(() => {
+        TWEET_COLLECTION.orderBy('created_at', 'desc').onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(async (change) => {
+
+            let tweet = await getTweetInfo(change.doc.data(), currentUser.value)
+            console.log(tweet)
+
+            if(change.type === 'added') {
+              tweets.value.splice(change.newIndex, 0, tweet)
+            } else if (change.type === "modified") {
+              tweets.value.splice(change.oldIndex, 1, tweet)
+            } else if (change.type === "removed") {
+              tweets.value.splice(change.oldIndex, 1)
+            }
+          })
+        })
+      })
+
+      // const getUserinfo = async (tweet) => {
+      //   const doc = await USER_COLLECTION.doc(tweet.uid).get()
+      //   // tweet.profile_image_url = doc.data().profile_image_url
+      //   // tweet.email = doc.data().email
+      //   // tweet.userName = doc.data().userName
+      //   tweet = {...tweet, ...doc.data()}
+      //   // console.log(tweet)
+      //   return tweet
+      // }
+
+      // const onAddTweet = async () => {
+      //   try {
+      //   const doc = TWEET_COLLECTION.orderBy('created_at', 'desc').doc()
+      //   doc.set({
+      //     id: doc.id,
+      //     tweet_body: tweetBody.value,
+      //     uid: currentUser.value.uid,
+      //     created_at: Date.now(),
+      //     num_coments: 0,
+      //     num_retweets: 0,
+      //     num_likes: 0
+      //   })
+      //   } catch(e) {
+      //     console.log('on add tweet error on homepage:', e)
+      //   }
+      // }
+
+      const onAddTweet = async () => {
+        try {
+          await addTweet(tweetBody.value, currentUser.value)
+          tweetBody.value = ''
+        } catch(e) {
+          console.log('on add tweet error on homepage:', e)
+        }
+      }
+
+      return {
+        currentUser, tweetBody, onAddTweet, tweets
+      }
     }
 }
 </script>

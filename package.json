@@ -7,8 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "firebase": "^8.8.1",
+    "moment": "^2.29.1",
     "vue": "^3.0.5",
-    "vue-router": "^4.0.10"
+    "vue-router": "^4.0.10",
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.2.5",

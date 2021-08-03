@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from '../store'
 
 import Home from '../pages/Home.vue'
 import Notification from '../pages/Notification.vue'
@@ -6,23 +7,37 @@ import Messages from '../pages/Messages.vue'
 import Profile from '../pages/Profile.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
+// import { recordExpression } from "@babel/types";
 
 const routes = [
-    {path: '/', component: Home, icon: 'fas fa-home fa-fw text-2xl', title: '홈', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/', component: Home, icon: 'fas fa-hashtag fa-fw text-2xl', title: '탐색하기', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/notification', component: Notification, icon: 'far fa-bell fa-fw text-2xl', title: '알림', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/messages',component: Messages, icon: 'far fa-envelope fa-fw text-2xl', title: '쪽지', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/', component: Home, icon: 'far fa-bookmark fa-fw text-2xl', title: '북마크', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/', component: Home, icon: 'far fa-list-alt fa-fw text-2xl', title: '리스트', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/profile',component: Profile, icon: 'far fa-user fa-fw text-2xl', title: '프로필', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/', component: Home, icon: 'fas fa-ellipsis-h fa-fw text-2xl', title: '더보기', meta: {isMenu: true, layout: 'DefaultLayout'}},
-    {path: '/register', component: Register, meta: {isMenu: false, layout: 'EmptyLayout'}},
-    {path: '/login', component: Login, meta: {isMenu: false, layout: 'EmptyLayout'}},
+    {path: '/', name: 'home', component: Home, icon: 'fas fa-home fa-fw text-2xl', title: '홈', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/', name: 'explore', component: Home, icon: 'fas fa-hashtag fa-fw text-2xl', title: '탐색하기', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/notification', name: 'notifivations', component: Notification, icon: 'far fa-bell fa-fw text-2xl', title: '알림', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/messages', name: 'messages',component: Messages, icon: 'far fa-envelope fa-fw text-2xl', title: '쪽지', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/', name: 'bookmarks', component: Home, icon: 'far fa-bookmark fa-fw text-2xl', title: '북마크', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/', name: 'list', component: Home, icon: 'far fa-list-alt fa-fw text-2xl', title: '리스트', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/profile', name: 'profile',component: Profile, icon: 'far fa-user fa-fw text-2xl', title: '프로필', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/', name: 'more', component: Home, icon: 'fas fa-ellipsis-h fa-fw text-2xl', title: '더보기', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/register', name: 'register', component: Register, meta: {isMenu: false, layout: 'EmptyLayout'}},
+    {path: '/login', name: 'login', component: Login, meta: {isMenu: false, layout: 'EmptyLayout'}},
 ]
 
 const router = createRouter({
     history: createWebHistory(),
     routes
+})
+
+
+// navigation guard
+router.beforeEach((to, from, next) => {
+    const currentUser = store.state.user
+    // console.log(to.matched)
+    const requireAuth = to.matched.some((record) => record.meta.requireAuth)
+    // console.log(to)
+    // not authenticated
+    if(requireAuth && !currentUser) next('/login')
+    // authenticated
+    else next()
 })
 
 export default router

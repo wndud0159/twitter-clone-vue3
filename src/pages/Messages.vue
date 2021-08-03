@@ -16,7 +16,7 @@
                         <span class="text-gray-500 hidden xl:inline-block">@wndud0159</span>
                         <span class="text-gray-500 hidden lg:inline-block">1월 29일</span>
                     </div>
-                    <div class="text-gray-500">메세지</div>
+                    <div class="text-gray-500"></div>
                 </div> 
             </div>
         </div>
