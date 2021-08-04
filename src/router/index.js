@@ -7,6 +7,7 @@ import Messages from '../pages/Messages.vue'
 import Profile from '../pages/Profile.vue'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
+import Tweet from '../pages/Tweet.vue'
 // import { recordExpression } from "@babel/types";
 
 const routes = [
@@ -18,6 +19,7 @@ const routes = [
     {path: '/', name: 'list', component: Home, icon: 'far fa-list-alt fa-fw text-2xl', title: '리스트', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
     {path: '/profile', name: 'profile',component: Profile, icon: 'far fa-user fa-fw text-2xl', title: '프로필', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
     {path: '/', name: 'more', component: Home, icon: 'fas fa-ellipsis-h fa-fw text-2xl', title: '더보기', meta: {isMenu: true, layout: 'DefaultLayout', requireAuth: true}},
+    {path: '/tweet/:id', name: 'tweet', component: Tweet, meta: {isMenu: false, layout: 'DefaultLayout', requireAuth: true}},
     {path: '/register', name: 'register', component: Register, meta: {isMenu: false, layout: 'EmptyLayout'}},
     {path: '/login', name: 'login', component: Login, meta: {isMenu: false, layout: 'EmptyLayout'}},
 ]

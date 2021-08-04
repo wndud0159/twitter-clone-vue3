@@ -45,23 +45,23 @@ export default {
       const tweets = ref([])
 
 
-      onBeforeMount(() => {
-        TWEET_COLLECTION.orderBy('created_at', 'desc').onSnapshot(snapshot => {
-          snapshot.docChanges().forEach(async (change) => {
+      // onBeforeMount(() => {
+      //   TWEET_COLLECTION.orderBy('created_at', 'desc').onSnapshot(snapshot => {
+      //     snapshot.docChanges().forEach(async (change) => {
 
-            let tweet = await getTweetInfo(change.doc.data(), currentUser.value)
-            console.log(tweet)
+      //       let tweet = await getTweetInfo(change.doc.data(), currentUser.value)
+      //       // console.log(tweet)
 
-            if(change.type === 'added') {
-              tweets.value.splice(change.newIndex, 0, tweet)
-            } else if (change.type === "modified") {
-              tweets.value.splice(change.oldIndex, 1, tweet)
-            } else if (change.type === "removed") {
-              tweets.value.splice(change.oldIndex, 1)
-            }
-          })
-        })
-      })
+      //       if(change.type === 'added') {
+      //         tweets.value.splice(change.newIndex, 0, tweet)
+      //       } else if (change.type === "modified") {
+      //         tweets.value.splice(change.oldIndex, 1, tweet)
+      //       } else if (change.type === "removed") {
+      //         tweets.value.splice(change.oldIndex, 1)
+      //       }
+      //     })
+      //   })
+      // })
 
       // const getUserinfo = async (tweet) => {
       //   const doc = await USER_COLLECTION.doc(tweet.uid).get()
@@ -89,6 +89,23 @@ export default {
       //     console.log('on add tweet error on homepage:', e)
       //   }
       // }
+
+      onBeforeMount(() => {
+        TWEET_COLLECTION.orderBy('created_at', 'desc').onSnapshot((snapshot) => {
+          snapshot.docChanges().forEach(async (change) => {
+            let tweet = await getTweetInfo(change.doc.data(), currentUser.value)
+
+            if (change.type === 'added') {
+              tweets.value.splice(change.newIndex, 0, tweet)
+            } else if (change.type === 'modified') {
+              tweets.value.splice(change.oldIndex, 1, tweet)
+            } else if (change.type === 'removed') {
+              tweets.value.splice(change.oldIndex, 1)
+            }
+          })
+        })
+      })
+
 
       const onAddTweet = async () => {
         try {

@@ -55,11 +55,13 @@
 <script>
 import Trends from '../components/Trends.vue'
 import Tweets from '../components/Tweets.vue'
+import store from '../store'
+import {computed, ref} from 'vue'
+
 export default {
     components: {
         Trends,
         Tweets
-
     }
 }
 </script>
