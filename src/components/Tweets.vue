@@ -3,7 +3,7 @@
               <div class=" flex px-3 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
                 <img 
                 class="w-10 h-10 rounded-full hover:opacity-80 cursor-pointer" 
-                :src="currentUser.profile_image_url"
+                :src="tweet.profile_image_url"
                 >
                 <div class=" ml-3 flex-1 flex flex-col space-y-1">
                   <div class="text-sm flex justify-between items-center">
@@ -62,6 +62,8 @@ import {ref} from 'vue'
 import ComentModal from './ComentModal.vue'
 import handleRetweet from '../utills/handleRetweet'
 import handleLikes from '../utills/handleLikes'
+import {TWEET_COLLECTION ,COMENT_COLLECTION, LIKE_COLLECTION, RETWEET_COLLECTION, USER_COLLECTION} from '../firebase'
+import firebase from 'firebase'
 
 export default {
   components: { ComentModal },
@@ -71,8 +73,29 @@ export default {
    ],
    setup() {
      const showComentModal = ref(false)
+
+    const onDeleteTweet = async (tweet) => {
+      if (confirm('정말로 트윗을 삭제하시겠습니까?')) {
+        // delete tweet
+        await TWEET_COLLECTION.doc(tweet.id).delete()
+        // delete comments
+        const commentSnapshot = await COMENT_COLLECTION.where('from_tweet_id', '==', tweet.id).get()
+        commentSnapshot.docs.forEach(async (doc) => await doc.ref.delete())
+        // delete likes
+        const likeSnapshot = await LIKE_COLLECTION.where('from_tweet_id', '==', tweet.id).get()
+        likeSnapshot.docs.forEach(async (doc) => await doc.ref.delete())
+        // delete retweets
+        const retweetCollection = await RETWEET_COLLECTION.where('from_tweet_id', '==', tweet.id).get()
+        retweetCollection.docs.forEach(async (doc) => await doc.ref.delete())
+        // user collection - num_tweets (-1)
+        await USER_COLLECTION.doc(tweet.uid).update({
+          num_tweets: firebase.firestore.FieldValue.increment(-1),
+        })
+      }
+    }
+
      return {
-       moment, showComentModal, handleRetweet, handleLikes
+       moment, showComentModal, handleRetweet, handleLikes, onDeleteTweet
      }
    }
 }
